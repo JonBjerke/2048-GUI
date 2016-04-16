@@ -1,4 +1,4 @@
-//! Textual version of the game 2048.
+//! Textual version of the game 2048. Update Jon
 
 extern crate ansi_term as ansi ;
 extern crate rand ;
