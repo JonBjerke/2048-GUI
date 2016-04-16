@@ -11,3 +11,15 @@ ansi_term = "*"
 rand = "*"
 conrod = "*"
 
+piston_window = "*"
+
+daggy = "0.4.0"
+pistoncore-input = "0.9.0"
+piston2d-graphics = "0.16.0"
+num = "0.1.30"
+time = "0.1.34"
+vecmath = "0.2.0"
+
+[dev-dependencies]
+find_folder = "0.3.0"
+
