@@ -1,0 +1,13 @@
+[package]
+name = "lib_2048"
+version = "0.1.0"
+authors = ["Adrien Champion <adrien.champion@mail.com>"]
+
+[[bin]]
+name = "bin_2048"
+
+[dependencies]
+ansi_term = "*"
+rand = "*"
+conrod = "*"
+
