@@ -32,17 +32,14 @@ type UiCell<'a> = conrod::UiCell<'a, Backend>;
 fn main() {
  
 
- /*
-  // test code 1.0 gets ready to build a window but doesn't draw it 
+ //HERE 
+  //This creates a window 800x600
   let window: PistonWindow =
-        WindowSettings::new("Canvas Demo", [800, 600])
-            .exit_on_esc(true)
-            .vsync(true)
-            .build()
-            .unwrap();
- */
+        WindowSettings::new("2048", [800, 600])
+            .exit_on_esc(true).vsync(true).build().unwrap();
+  //TO HERE
 
-    // ***THIS ONE WORKS***
+  /*/ ***THIS ONE WORKS TOO***
     // Construct the window.
     // Creates a new window and draws the border
   let window: PistonWindow = WindowSettings::new("2048", (640, 480))
@@ -53,7 +50,7 @@ fn main() {
     e.draw_2d(|_c, g| {
       clear([0.5, 1.0, 0.5, 1.0], g);
     });
-  }
+  }*/
 
   use std::process::exit ;
 
