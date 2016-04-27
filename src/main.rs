@@ -4,7 +4,7 @@ extern crate lib_2048 ;
 //Added Code
 extern crate ansi_term as ansi ;
 extern crate rand ;
-#[macro_use] extern crate conrod;
+extern crate conrod;
 extern crate piston_window;
 // 
 
@@ -16,42 +16,74 @@ use conrod::{Canvas, Theme, Widget };//,color};
 use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, WindowSettings, clear};
 //
 
+pub type Color = [f32; 4] ;
+
+static BACKGROUND: Color = [255.0, 255.0, 255.0, 1.0] ;
+static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
+static RESET: Color = [0.0, 0.0, 0.0, 1.0];
+static DEFAULTCELL:  Color = [0.0, 0.0, 0.0, 1.0] ;
+static CELLYELLOW:  Color = [255.0, 255.0, 0.0, 1.0] ;
+static CELLRED:  Color = [255.0, 0.0, 0.0, 1.0] ;
+static CELLGREEN:  Color = [0.0, 255.0, 0.0, 1.0] ;
+static CELLLIGHTBLUE:  Color = [0.0, 255.0, 255.0, 1.0] ;
+static CELLPINK:  Color = [255.0, 0.0, 255.0, 1.0] ;
+static CELLBLUE:  Color = [0.0, 0.0, 255.0, 1.0] ;
+
+
+
+fn color_of_pow(pow: u32) -> Color {
+  match pow {
+    0 => DEFAULTCELL,
+    1 => CELLYELLOW,
+    2 => CELLRED,
+    3 => CELLGREEN,
+    4 => CELLLIGHTBLUE,
+    5 => CELLPINK,
+    6 => CELLBLUE,
+    7 => CELLYELLOW,
+    8 => CELLRED,
+    9 => CELLGREEN,
+    10 => CELLLIGHTBLUE,
+    11 => CELLPINK,
+    12 => CELLBLUE,
+    _ => CELLYELLOW,
+  }
+}
+
+fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
+  match grid.grid()[row][col] {
+    None => 0,
+    Some(ref cell) => cell.pow(),
+  }
+}
+
 /// Displays the grid using for instance piston.
-fn display_grid(_grid: & Grid, window: & mut PistonWindow) {
+fn display_grid(grid: & Grid, window: & mut PistonWindow) {
   
-  while let Some(e) = window.next() {
+  
+  if let Some(e) = window.next() {
         window.draw_2d(&e, |c, g| {
-            clear([0.5, 0.5, 0.5, 1.0], g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color = dark Grey
-                      [0.0, 0.0, 640.0, 580.0], // rectangle
+            clear(BACKGROUND, g); 
+            
+            rectangle(SCOREBOARD, 
+                      [20.0, 20.0, 140.0, 60.0], 
                       c.transform, g);
-            rectangle([0.6, 0.6, 0.6, 0.6], //  light grey
-                      [20.0, 100.0, 380.0, 380.0], // rectangle
+            rectangle(RESET,
+                      [180.0, 20.0, 140.0, 60.0],
                       c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // black
-                      [100.0, 100.0, 20.0, 380.0], // c1
-                      c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color
-                      [200.0, 100.0, 20.0, 380.0], // c2
-                      c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color
-                      [300.0, 100.0, 20.0, 380.0], // c3
-                      c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color
-                      [20.0, 180.0, 380.0, 20.0], // r1
-                      c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color
-                      [20.0, 280.0, 380.0, 20.0], // r2
-                      c.transform, g);
-            rectangle([0.4, 0.4, 0.4, 1.0], // color
-                      [20.0, 380.0, 380.0, 20.0], // r3
-                      c.transform, g);
-            rectangle([0.6, 0.6, 0.6, 1.0], //  light grey
-                      [220.0, 20.0, 180.0, 60.0], // current score
-                      c.transform, g);
-            rectangle([0.6, 0.6, 0.6, 1.0], //  light grey
-                      [20.0, 20.0, 180.0, 60.0], // high score
-                      c.transform, g);
+            for row in 0..4 {
+              for col in 0..4 {
+                rectangle(
+                  color_of_pow( pow_of(grid, row, col) ), //  grey
+                  [
+                    20.0 + (col as f64) * (60.0 + 20.0),
+                    100.0 + (row as f64) * 80.0,
+                    60.0, 60.0
+                  ],
+                  c.transform, g
+                ) ;
+              }
+            }
 
       });
   }
@@ -85,7 +117,7 @@ fn main() {
   // let seed = Seed::of_str( <user_provided_string> ) ;
 
   //create a Window
-  let mut window: PistonWindow = WindowSettings::new("2048", (420, 500)) //x,y
+  let mut window: PistonWindow = WindowSettings::new("2048", (340, 420)) //x,y
     .exit_on_esc(true)
     .build()
     .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
@@ -95,6 +127,68 @@ fn main() {
   // Create initial grid.
   let mut grid = Grid::mk(seed) ;
   grid.spawn() ;
+
+  //let mut count = 0 ;
+
+  // Rendering loop.
+  'rendering: loop {
+    use Dir::* ;
+    use Evolution::* ;
+
+    //count = (count + 1) % 1000 ;
+
+    //println!("count: {}", count) ;
+  
+    display_grid(& grid, & mut window) ;
+
+
+    
+    // grid.right(); 
+    // //grid.spawn(); 
+    // grid.left(); 
+    
+    // grid.right(); 
+    
+    // grid.left(); 
+   
+    // grid.right(); 
+   
+    // grid.up();
+    
+    // match count {
+    //   250 => { grid.up() ; () },
+    //   500 => { grid.spawn() ; () },
+    //   750 => { grid.left() ; () },
+    //   999 => { grid.spawn() ; () },
+    //   _ => (),
+    // }
+
+    // 1) display new grid 
+    // 2) ask for user input
+    // 3) the game calculates new score and tile locations
+    // 4) loop ends
+    // (could put 1 at the end once all other parts are implemented.)
+
+    // // What is the user asking you to do?
+    // let evolution = match read_user_input() {
+    // let evolution = match AI{
+    //   Up => grid.up(),
+    //   Dw => grid.down(),
+    //   Rg => grid.right(),
+    //   Lf => grid.left(),
+    // } ;
+
+    // // The evolution tells you what happened.
+    // match evolution {
+    //   // Nothing happened (no move no merge).
+    //   Nothing => (),
+    //   // Some tiles moved but no merge.
+    //   Moved => grid.spawn(),
+    //   // Merged some tiles, yields the score of the tiles merged.
+    //   Merged(_score) => grid.spawn(),//possible animation
+    // }
+  }
+}
 
   // Rendering loop.
   'rendering: loop {
