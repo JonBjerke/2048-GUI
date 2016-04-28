@@ -6,14 +6,18 @@ extern crate ansi_term as ansi ;
 extern crate rand ;
 extern crate conrod;
 extern crate piston_window;
+extern crate image as img ;
+extern crate opengl_graphics;
 // 
 
+use opengl_graphics::GlGraphics;
+use opengl_graphics::Texture as GlTexture;
 
 pub use lib_2048::{ Seed, Grid, Dir, Evolution, Cell } ;
 
 //Added code
 use conrod::{Canvas, Theme, Widget };//,color};
-use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, WindowSettings, clear};
+pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, WindowSettings, clear};
 //
 
 pub type Color = [f32; 4] ;
@@ -150,6 +154,8 @@ fn read_user_input() -> Dir {
 
 fn main() {
 
+  img::open("blah") ;
+
   // Just like in minecraft, randomness is dictated by a seed.
   // This creates a random seed.
   let seed = Seed::mk() ;
@@ -233,3 +239,4 @@ fn main() {
     // }
   }
 }
+
