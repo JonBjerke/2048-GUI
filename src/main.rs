@@ -22,22 +22,22 @@ pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, Window
 
 pub type Color = [f32; 4] ;
 
-static BACKGROUND: Color = [255.0, 255.0, 255.0, 1.0] ;
+static BACKGROUND: Color = [1.0, 1.0, 1.0, 1.0] ;
 static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
 static RESET: Color = [0.0, 0.0, 0.0, 1.0];
-static DEFAULTCELL:  Color = [0.0, 0.0, 0.0, 1.0] ;
-static CELLYELLOW:  Color = [255.0, 255.0, 0.0, 1.0] ;
-static CELLRED:  Color = [255.0, 0.0, 0.0, 1.0] ;
-static CELLGREEN:  Color = [0.0, 255.0, 0.0, 1.0] ;
-static CELLLIGHTBLUE:  Color = [0.0, 255.0, 255.0, 1.0] ;
-static CELLPINK:  Color = [255.0, 0.0, 255.0, 1.0] ;
-static CELLBLUE:  Color = [0.0, 0.0, 255.0, 1.0] ;
+static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
+static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
+static CELLRED:  Color = [1.0, 0.0, 0.0, 1.0] ;
+static CELLGREEN:  Color = [0.0, 1.0, 0.0, 1.0] ;
+static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
+static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
+static CELLBLUE:  Color = [0.0, 0.0, 1.0, 1.0] ;
 
 
 
 fn color_of_pow(pow: u32) -> Color {
   match pow {
-    0 => DEFAULTCELL,
+    0 => DEFAULTCELLBLACK,
     1 => CELLYELLOW,
     2 => CELLRED,
     3 => CELLGREEN,
@@ -53,6 +53,17 @@ fn color_of_pow(pow: u32) -> Color {
     _ => CELLYELLOW,
   }
 }
+
+//path can just be a string
+//image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
+
+// Image::new_color([color[0], color[1], color[2], 1.0])
+//                 .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
+//                 .rect([x, y, width, height])
+//                 .draw(&self.image,
+//                       default_draw_state(),
+//                       c.transform,
+//                       gl);
 
 ////https://github.com/PistonDevelopers/image
 
@@ -80,23 +91,6 @@ fn color_of_pow(pow: u32) -> Color {
 
 // use image::GenericImage;
 
-// fn main() {
-//     // Use the open function to load an image from a Path.
-//     // ```open``` returns a dynamic image.
-//     let img = image::open(&Path::new("test.jpg")).unwrap();
-
-//     // The dimensions method returns the images width and height
-//     println!("dimensions {:?}", img.dimensions());
-
-//     // The color method returns the image's ColorType
-//     println!("{:?}", img.color());
-
-//     let ref mut fout = File::create(&Path::new("test.png")).unwrap();
-
-//     // Write the contents of this image to the Writer in PNG format.
-//     let _ = img.save(fout, image::PNG).unwrap();
-// }
-
 fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
   match grid.grid()[row][col] {
     None => 0,
@@ -105,11 +99,10 @@ fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
 }
 
 /// Displays the grid using for instance piston.
-fn display_grid(grid: & Grid, window: & mut PistonWindow) {
+fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindow, glyphs: & mut Glyphs) {
   
   
-  if let Some(e) = window.next() {
-        window.draw_2d(&e, |c, g| {
+  window.draw_2d(e, |c, g| {
             clear(BACKGROUND, g); 
             
             rectangle(SCOREBOARD, 
@@ -130,31 +123,44 @@ fn display_grid(grid: & Grid, window: & mut PistonWindow) {
                   c.transform, g
                 ) ;
               }
-            }
+            } ;
 
+            let mut score = format!("{}", grid.score()); 
+
+            let transform = c.transform.trans(20.0, 76.0) ;
+            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 20).draw(
+              &score, glyphs, & c.draw_state, transform, g
+            ) ;
+
+            let transform = c.transform.trans(20.0, 36.0) ;
+            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 20).draw(
+              "Score", glyphs, & c.draw_state, transform, g
+            ) ;
+
+            let transform = c.transform.trans(190.0, 55.0) ;
+            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 15).draw(
+              "Push 'r' to Reset", glyphs, & c.draw_state, transform, g
+            ) ;
       });
-  }
-
-  //panic!("display is not implemented")
-  //Display new score
-  //grid.score();
-  //grid.grid(); // vector of vector or cells
-  //cell
-  //println!("got to display_grid");
-  //extra credit for defining a trait for grid that will implement the key press
-  //
 }
 
 /// Read user input (up left down right). User may also want to exit, reset,
 /// *etc.*
-fn read_user_input() -> Dir {
-  //Evolution goes here
-  panic!("user interaction is not implemented")
+fn read_user_input(button: Button) -> Option<Dir> {  
+  use keyboard::Key ;
+  match button {
+    Button::Keyboard(key) => match key {
+      Key::Up | Key::W => Some( Dir::Up ),
+      Key::Down | Key::S => Some( Dir::Dw ),
+      Key::Left | Key::A => Some( Dir::Lf ),
+      Key::Right | Key::D => Some( Dir::Rg ),
+      _ => None,
+    },
+    _ => None
+  }
 }
 
 fn main() {
-
-  img::open("blah") ;
 
   // Just like in minecraft, randomness is dictated by a seed.
   // This creates a random seed.
@@ -174,69 +180,43 @@ fn main() {
     
   use std::process::exit ;
 
+  let font_path = "fonts/NotoSans-Bold.ttf" ;
+  let mut glyphs = Glyphs::new(font_path, window.factory.clone()).unwrap() ;
+
   // Create initial grid.
   let mut grid = Grid::mk(seed) ;
+
   grid.spawn() ;
 
-  // let mut count = 0 ;
-
-  // Rendering loop.
-  'rendering: loop {
-    use Dir::* ;
-    use Evolution::* ;
-
-    // count = (count + 1) % 1000 ;
-
-    // println!("count: {}", count) ;
-  
-    display_grid(& grid, & mut window) ;
-
-
-    
-    grid.right(); 
-    //grid.spawn(); 
-    grid.left(); 
-    
-    grid.right(); 
-    
-    grid.left(); 
-   
-    grid.right(); 
-   
-    grid.up();
-    
-    // match count {
-    //   250 => { grid.up() ; () },
-    //   500 => { grid.spawn() ; () },
-    //   750 => { grid.left() ; () },
-    //   999 => { grid.spawn() ; () },
-    //   _ => (),
-    // }
-
-    // 1) display new grid 
-    // 2) ask for user input
-    // 3) the game calculates new score and tile locations
-    // 4) loop ends
-    // (could put 1 at the end once all other parts are implemented.)
-
-    // // What is the user asking you to do?
-    // let evolution = match read_user_input() {
-    // let evolution = match AI{
-    //   Up => grid.up(),
-    //   Dw => grid.down(),
-    //   Rg => grid.right(),
-    //   Lf => grid.left(),
-    // } ;
-
-    // // The evolution tells you what happened.
-    // match evolution {
-    //   // Nothing happened (no move no merge).
-    //   Nothing => (),
-    //   // Some tiles moved but no merge.
-    //   Moved => grid.spawn(),
-    //   // Merged some tiles, yields the score of the tiles merged.
-    //   Merged(_score) => grid.spawn(),//possible animation
-    // }
+  while let Some(event) = window.next() {
+    match event {
+      Event::Update(_) => (),
+      e @ Event::Render(_) => display_grid(& e, & grid, & mut window, & mut glyphs),
+      Event::Input( Input::Press(button) ) => {
+        match read_user_input(button) {
+          None => (),
+          Some(dir) => {
+            let evolution = match dir {
+              Dir::Up => grid.up(),
+              Dir::Dw => grid.down(),
+              Dir::Lf => grid.left(),
+              Dir::Rg => grid.right(),
+            } ;
+            match evolution {
+              Evolution::Nothing => (),
+              Evolution::Moved => {
+                let could_spawn = grid.spawn() ;
+                assert!( could_spawn )
+              },
+              Evolution::Merged(_) => {
+                let could_spawn = grid.spawn() ;
+                assert!( could_spawn )
+              },
+            }
+          }
+        }
+      },
+      _ => (),
+    }
   }
 }
-
