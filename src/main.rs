@@ -31,7 +31,7 @@ static CELLRED:  Color = [1.0, 0.0, 0.0, 1.0] ;
 static CELLGREEN:  Color = [0.0, 1.0, 0.0, 1.0] ;
 static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
 static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
-static CELLBLUE:  Color = [0.0, 0.0, 1.0, 1.0] ;
+static CELLBLUE:  Color = [0.0, 0.5, 1.0, 1.0] ;
 
 
 
@@ -98,6 +98,15 @@ fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
   }
 }
 
+fn value( pow: u32 ) -> u32{
+  let i = 0;
+  let mut value = 1;
+  for i in 0..pow {
+    value = 2 * value;
+  }
+  return value;
+}
+
 /// Displays the grid using for instance piston.
 fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindow, glyphs: & mut Glyphs) {
   
@@ -111,6 +120,9 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
             rectangle(RESET,
                       [180.0, 20.0, 140.0, 60.0],
                       c.transform, g);
+
+            let mut cell_pow = format!("{}", grid.score());
+
             for row in 0..4 {
               for col in 0..4 {
                 rectangle(
@@ -122,6 +134,15 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                   ],
                   c.transform, g
                 ) ;
+                
+                cell_pow = format!("{}", value(pow_of(grid, row, col)));
+                let transform = c.transform.trans(
+                  45.0 + (col as f64) * (60.0 + 20.0) - (pow_of(grid, row, col) as f64),
+                  140.0 + (row as f64) * 80.0) ;
+                text::Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
+                  &cell_pow, glyphs, & c.draw_state, transform, g
+                ) ;
+                
               }
             } ;
 
@@ -154,6 +175,7 @@ fn read_user_input(button: Button) -> Option<Dir> {
       Key::Down | Key::S => Some( Dir::Dw ),
       Key::Left | Key::A => Some( Dir::Lf ),
       Key::Right | Key::D => Some( Dir::Rg ),
+       //Key::R => reset();
       _ => None,
     },
     _ => None
