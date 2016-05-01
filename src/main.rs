@@ -53,6 +53,42 @@ fn color_of_pow(pow: u32) -> Color {
     _ => CELLYELLOW,
   }
 }
+//ANOTHER THEME
+//static BACKGROUND: Color = [0.3, 0.3, 0.3, 1.0] ;
+// static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
+// static RESET: Color = [0.0, 0.0, 0.0, 1.0];
+// static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
+
+// static WHITE: Color = [1.0, 1.0, 1.0, 1.0] ;
+
+// static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
+// static CELLRED:  Color = [1.0, 0.8, 0.0, 1.0] ;
+// static CELLGREEN:  Color = [1.0, 0.6, 0.0, 1.0] ;
+// static CELLLIGHTBLUE:  Color = [1.0, 0.4, 0.0, 1.0] ;
+// static CELLPINK:  Color = [1.0, 0.2, 0.0, 1.0] ;
+// static CELLBLUE:  Color = [1.0, 0.0, 0.0, 1.0] ;
+// static CELLYELLOW2: Color = [0.8, 0.0, 0.0, 1.0] ;
+// static CELLRED2: Color = [0.6, 0.0, 0.0, 1.0] ;
+// static CELLGREEN2:  Color = [0.4, 0.0, 0.0, 1.0] ;
+
+// fn color_of_pow(pow: u32) -> Color {
+//   match pow {
+//     0 => DEFAULTCELLBLACK,
+//     1 => CELLYELLOW,
+//     2 => CELLRED,
+//     3 => CELLGREEN,
+//     4 => CELLLIGHTBLUE,
+//     5 => CELLPINK,
+//     6 => CELLBLUE,
+//     7 => CELLYELLOW2,
+//     8 => CELLRED2,
+//     9 => CELLGREEN2,
+//     10 => CELLLIGHTBLUE,
+//     11 => CELLPINK,
+//     12 => CELLBLUE,
+//     _ => CELLYELLOW,
+//   }
+// }
 
 //path can just be a string
 //image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
