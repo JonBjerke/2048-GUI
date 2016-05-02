@@ -22,54 +22,16 @@ pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, Window
 
 pub type Color = [f32; 4] ;
 
-static BACKGROUND: Color = [1.0, 1.0, 1.0, 1.0] ;
-static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
-static RESET: Color = [0.0, 0.0, 0.0, 1.0];
-static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
-static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
-static CELLRED:  Color = [1.0, 0.0, 0.0, 1.0] ;
-static CELLGREEN:  Color = [0.0, 1.0, 0.0, 1.0] ;
-static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
-static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
-static CELLBLUE:  Color = [0.0, 0.5, 1.0, 1.0] ;
-
-
-
-fn color_of_pow(pow: u32) -> Color {
-  match pow {
-    0 => DEFAULTCELLBLACK,
-    1 => CELLYELLOW,
-    2 => CELLRED,
-    3 => CELLGREEN,
-    4 => CELLLIGHTBLUE,
-    5 => CELLPINK,
-    6 => CELLBLUE,
-    7 => CELLYELLOW,
-    8 => CELLRED,
-    9 => CELLGREEN,
-    10 => CELLLIGHTBLUE,
-    11 => CELLPINK,
-    12 => CELLBLUE,
-    _ => CELLYELLOW,
-  }
-}
-//ANOTHER THEME
-//static BACKGROUND: Color = [0.3, 0.3, 0.3, 1.0] ;
+// static BACKGROUND: Color = [1.0, 1.0, 1.0, 1.0] ;
 // static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
 // static RESET: Color = [0.0, 0.0, 0.0, 1.0];
 // static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
-
-// static WHITE: Color = [1.0, 1.0, 1.0, 1.0] ;
-
 // static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
-// static CELLRED:  Color = [1.0, 0.8, 0.0, 1.0] ;
-// static CELLGREEN:  Color = [1.0, 0.6, 0.0, 1.0] ;
-// static CELLLIGHTBLUE:  Color = [1.0, 0.4, 0.0, 1.0] ;
-// static CELLPINK:  Color = [1.0, 0.2, 0.0, 1.0] ;
-// static CELLBLUE:  Color = [1.0, 0.0, 0.0, 1.0] ;
-// static CELLYELLOW2: Color = [0.8, 0.0, 0.0, 1.0] ;
-// static CELLRED2: Color = [0.6, 0.0, 0.0, 1.0] ;
-// static CELLGREEN2:  Color = [0.4, 0.0, 0.0, 1.0] ;
+// static CELLRED:  Color = [1.0, 0.0, 0.0, 1.0] ;
+// static CELLGREEN:  Color = [0.0, 1.0, 0.0, 1.0] ;
+// static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
+// static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
+// static CELLBLUE:  Color = [0.0, 0.5, 1.0, 1.0] ;
 
 // fn color_of_pow(pow: u32) -> Color {
 //   match pow {
@@ -80,15 +42,51 @@ fn color_of_pow(pow: u32) -> Color {
 //     4 => CELLLIGHTBLUE,
 //     5 => CELLPINK,
 //     6 => CELLBLUE,
-//     7 => CELLYELLOW2,
-//     8 => CELLRED2,
-//     9 => CELLGREEN2,
+//     7 => CELLYELLOW,
+//     8 => CELLRED,
+//     9 => CELLGREEN,
 //     10 => CELLLIGHTBLUE,
 //     11 => CELLPINK,
 //     12 => CELLBLUE,
 //     _ => CELLYELLOW,
 //   }
-// }
+// } 
+
+static BACKGROUND: Color = [0.3, 0.3, 0.3, 1.0] ;
+static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
+static RESET: Color = [0.0, 0.0, 0.0, 1.0];
+static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
+
+static WHITE: Color = [1.0, 1.0, 1.0, 1.0] ;
+
+static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
+static CELLRED:  Color = [1.0, 0.8, 0.0, 1.0] ;
+static CELLGREEN:  Color = [1.0, 0.6, 0.0, 1.0] ;
+static CELLLIGHTBLUE:  Color = [1.0, 0.4, 0.0, 1.0] ;
+static CELLPINK:  Color = [1.0, 0.2, 0.0, 1.0] ;
+static CELLBLUE:  Color = [1.0, 0.0, 0.0, 1.0] ;
+static CELLYELLOW2: Color = [0.8, 0.0, 0.0, 1.0] ;
+static CELLRED2: Color = [0.6, 0.0, 0.0, 1.0] ;
+static CELLGREEN2:  Color = [0.4, 0.0, 0.0, 1.0] ;
+
+fn color_of_pow(pow: u32) -> Color {
+  match pow {
+    0 => DEFAULTCELLBLACK,
+    1 => CELLYELLOW,
+    2 => CELLRED,
+    3 => CELLGREEN,
+    4 => CELLLIGHTBLUE,
+    5 => CELLPINK,
+    6 => CELLBLUE,
+    7 => CELLYELLOW2,
+    8 => CELLRED2,
+    9 => CELLGREEN2,
+    10 => CELLLIGHTBLUE,
+    11 => CELLPINK,
+    12 => CELLBLUE,
+    _ => CELLYELLOW,
+  }
+}
 
 //path can just be a string
 //image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
@@ -170,7 +168,7 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                   ],
                   c.transform, g
                 ) ;
-                
+                //
                 cell_pow = format!("{}", value(pow_of(grid, row, col)));
                 let transform = c.transform.trans(
                   45.0 + (col as f64) * (60.0 + 20.0) - (pow_of(grid, row, col) as f64),
@@ -178,24 +176,24 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                 text::Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
                   &cell_pow, glyphs, & c.draw_state, transform, g
                 ) ;
-                
+                //
               }
             } ;
 
             let mut score = format!("{}", grid.score()); 
 
             let transform = c.transform.trans(20.0, 76.0) ;
-            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 20).draw(
+            text::Text::new_color(WHITE, 20).draw(
               &score, glyphs, & c.draw_state, transform, g
             ) ;
 
             let transform = c.transform.trans(20.0, 36.0) ;
-            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 20).draw(
+            text::Text::new_color(WHITE, 20).draw(
               "Score", glyphs, & c.draw_state, transform, g
             ) ;
 
             let transform = c.transform.trans(190.0, 55.0) ;
-            text::Text::new_color([0.0, 1.0, 0.0, 1.0], 15).draw(
+            text::Text::new_color(WHITE, 15).draw(
               "Push 'r' to Reset", glyphs, & c.draw_state, transform, g
             ) ;
       });
@@ -211,7 +209,7 @@ fn read_user_input(button: Button) -> Option<Dir> {
       Key::Down | Key::S => Some( Dir::Dw ),
       Key::Left | Key::A => Some( Dir::Lf ),
       Key::Right | Key::D => Some( Dir::Rg ),
-       //Key::R => reset();
+      //Key::R => reset();
       _ => None,
     },
     _ => None
