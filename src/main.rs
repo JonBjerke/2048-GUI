@@ -22,6 +22,8 @@ pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, Window
 
 pub type Color = [f32; 4] ;
 
+//Alternate Color theme
+
 // static BACKGROUND: Color = [1.0, 1.0, 1.0, 1.0] ;
 // static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
 // static RESET: Color = [0.0, 0.0, 0.0, 1.0];
