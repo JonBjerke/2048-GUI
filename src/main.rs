@@ -59,32 +59,35 @@ static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
 
 static WHITE: Color = [1.0, 1.0, 1.0, 1.0] ;
 
-static CELLYELLOW:  Color = [1.0, 1.0, 0.0, 1.0] ;
-static CELLRED:  Color = [1.0, 0.8, 0.0, 1.0] ;
-static CELLGREEN:  Color = [1.0, 0.6, 0.0, 1.0] ;
-static CELLLIGHTBLUE:  Color = [1.0, 0.4, 0.0, 1.0] ;
-static CELLPINK:  Color = [1.0, 0.2, 0.0, 1.0] ;
-static CELLBLUE:  Color = [1.0, 0.0, 0.0, 1.0] ;
-static CELLYELLOW2: Color = [0.8, 0.0, 0.0, 1.0] ;
-static CELLRED2: Color = [0.6, 0.0, 0.0, 1.0] ;
-static CELLGREEN2:  Color = [0.4, 0.0, 0.0, 1.0] ;
+static CELLYELLOW1:  Color = [1.0, 1.0, 0.0, 1.0] ;
+static CELLYELLOW2:  Color = [1.0, 0.8, 0.0, 1.0] ;
+static CELLYELLOW3:  Color = [1.0, 0.6, 0.0, 1.0] ;
+static CELLORANGE1:  Color = [1.0, 0.4, 0.0, 1.0] ;
+static CELLORANGE2:  Color = [1.0, 0.2, 0.0, 1.0] ;
+static CELLRED1:  Color = [1.0, 0.0, 0.0, 1.0] ;
+static CELLRED2: Color = [0.8, 0.0, 0.0, 1.0] ;
+static CELLRED3: Color = [0.6, 0.0, 0.0, 1.0] ;
+static CELLRED4:  Color = [0.4, 0.0, 0.0, 1.0] ;
+static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
+static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
+static CELLBLUE:  Color = [0.0, 0.5, 1.0, 1.0] ;
 
 fn color_of_pow(pow: u32) -> Color {
   match pow {
     0 => DEFAULTCELLBLACK,
-    1 => CELLYELLOW,
-    2 => CELLRED,
-    3 => CELLGREEN,
-    4 => CELLLIGHTBLUE,
-    5 => CELLPINK,
-    6 => CELLBLUE,
-    7 => CELLYELLOW2,
-    8 => CELLRED2,
-    9 => CELLGREEN2,
+    1 => CELLYELLOW1,
+    2 => CELLYELLOW2,
+    3 => CELLYELLOW3,
+    4 => CELLORANGE1,
+    5 => CELLORANGE2,
+    6 => CELLRED1,
+    7 => CELLRED2,
+    8 => CELLRED3,
+    9 => CELLRED4,
     10 => CELLLIGHTBLUE,
-    11 => CELLPINK,
-    12 => CELLBLUE,
-    _ => CELLYELLOW,
+    11 => CELLBLUE,
+    12 => CELLPINK,
+    _ => CELLYELLOW1,
   }
 }
 
@@ -139,6 +142,10 @@ fn value( pow: u32 ) -> u32{
     value = 2 * value;
   }
   return value;
+}
+
+fn reset () {
+  main();
 }
 
 /// Displays the grid using for instance piston.
@@ -209,10 +216,21 @@ fn read_user_input(button: Button) -> Option<Dir> {
       Key::Down | Key::S => Some( Dir::Dw ),
       Key::Left | Key::A => Some( Dir::Lf ),
       Key::Right | Key::D => Some( Dir::Rg ),
-      //Key::R => reset();
+      //Key::R => Some(reset()),
       _ => None,
     },
     _ => None
+  }
+}
+
+fn check_reset(button: Button) {
+  use keyboard::Key ;
+  match button {
+    Button::Keyboard(key) => match key {
+      Key::R => reset(),
+      _ => (),
+    },
+    _ => () 
   }
 }
 
@@ -243,12 +261,14 @@ fn main() {
   let mut grid = Grid::mk(seed) ;
 
   grid.spawn() ;
+  grid.spawn() ;
 
   while let Some(event) = window.next() {
     match event {
       Event::Update(_) => (),
       e @ Event::Render(_) => display_grid(& e, & grid, & mut window, & mut glyphs),
       Event::Input( Input::Press(button) ) => {
+        check_reset(button);
         match read_user_input(button) {
           None => (),
           Some(dir) => {
@@ -261,7 +281,8 @@ fn main() {
             match evolution {
               Evolution::Nothing => (),
               Evolution::Moved => {
-                let could_spawn = grid.spawn() ;
+                let could_spawn = grid.spawn();
+                assert!( could_spawn );
                 assert!( could_spawn )
               },
               Evolution::Merged(_) => {
