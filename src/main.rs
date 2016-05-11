@@ -2,21 +2,12 @@
 
 extern crate lib_2048 ;
 //Added Code
-extern crate ansi_term as ansi ;
-extern crate rand ;
-extern crate conrod;
 extern crate piston_window;
-extern crate image as img ;
-extern crate opengl_graphics;
+
 // 
-
-use opengl_graphics::GlGraphics;
-use opengl_graphics::Texture as GlTexture;
-
 pub use lib_2048::{ Seed, Grid, Dir, Evolution, Cell } ;
 
 //Added code
-use conrod::{Canvas, Theme, Widget };//,color};
 pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, WindowSettings, clear};
 //
 
@@ -138,16 +129,11 @@ fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
 }
 
 fn value( pow: u32 ) -> u32{
-  let i = 0;
   let mut value = 1;
-  for i in 0..pow {
+  for x in 0..pow {
     value = 2 * value;
   }
   return value;
-}
-
-fn reset () {
-  main();
 }
 
 /// Displays the grid using for instance piston.
@@ -164,8 +150,6 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                       [180.0, 20.0, 140.0, 60.0],
                       c.transform, g);
 
-            let mut cell_pow = format!("{}", grid.score());
-
             for row in 0..4 {
               for col in 0..4 {
                 rectangle(
@@ -178,7 +162,7 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                   c.transform, g
                 ) ;
                 //
-                cell_pow = format!("{}", value(pow_of(grid, row, col)));
+                let cell_pow = format!("{}", value(pow_of(grid, row, col)));
                 let transform = c.transform.trans(
                   45.0 + (col as f64) * (60.0 + 20.0) - (pow_of(grid, row, col) as f64),
                   140.0 + (row as f64) * 80.0) ;
@@ -189,7 +173,7 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
               }
             } ;
 
-            let mut score = format!("{}", grid.score()); 
+            let score = format!("{}", grid.score()); 
 
             let transform = c.transform.trans(20.0, 76.0) ;
             text::Text::new_color(WHITE, 20).draw(
@@ -201,9 +185,14 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
               "Score", glyphs, & c.draw_state, transform, g
             ) ;
 
-            let transform = c.transform.trans(190.0, 55.0) ;
+            let transform = c.transform.trans(188.0, 36.0) ;
             text::Text::new_color(WHITE, 15).draw(
-              "Push 'r' to Reset", glyphs, & c.draw_state, transform, g
+              "Press 'r' to Reset", glyphs, & c.draw_state, transform, g
+            ) ;
+            
+            let transform = c.transform.trans(188.0, 66.0) ;
+            text::Text::new_color(WHITE, 15).draw(
+              "Press 'Esc' to Quit", glyphs, & c.draw_state, transform, g
             ) ;
       });
 }
@@ -225,48 +214,14 @@ fn read_user_input(button: Button) -> Option<Dir> {
   }
 }
 
-fn check_reset(button: Button) {
-  use keyboard::Key ;
-  match button {
-    Button::Keyboard(key) => match key {
-      Key::R => reset(),
-      _ => (),
-    },
-    _ => () 
-  }
-}
-
-fn game(window: & mut PistonWindow) {
-  panic!("game unimplimeted");
-}
-
-fn main() {
-
-  // Just like in minecraft, randomness is dictated by a seed.
-  // This creates a random seed.
-  let seed = Seed::mk() ;
-
-  // Eventually you may want to allow the user to provide their own seed,
-  // if they want to play the same game again.
-  // That is, the `2` and `4` tiles will spawn at exactly the same place **if
-  // the player makes the same moves**.
-  // let seed = Seed::of_str( <user_provided_string> ) ;
-
-  //create a Window
-  let mut window: PistonWindow = WindowSettings::new("2048", (340, 420)) //x,y
-    .exit_on_esc(true)
-    .build()
-    .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
-    
-  use std::process::exit ;
-
+fn game(mut window: & mut PistonWindow) {
   let font_path = "fonts/NotoSans-Bold.ttf" ;
   let mut glyphs = Glyphs::new(font_path, window.factory.clone()).unwrap() ;
-
+  
+  let seed = Seed::mk() ;
   // Create initial grid.
   let mut grid = Grid::mk(seed) ;
 
-  grid.spawn() ;
   grid.spawn() ;
 
   while let Some(event) = window.next() {
@@ -274,7 +229,8 @@ fn main() {
       Event::Update(_) => (),
       e @ Event::Render(_) => display_grid(& e, & grid, & mut window, & mut glyphs),
       Event::Input( Input::Press(button) ) => {
-        check_reset(button);
+        check_reset(button, & mut window);
+        check_end(button);
         match read_user_input(button) {
           None => (),
           Some(dir) => {
@@ -302,4 +258,56 @@ fn main() {
       _ => (),
     }
   }
+}
+
+fn check_reset(button: Button, mut window: & mut PistonWindow) {
+  use keyboard::Key ;
+  match button {
+    Button::Keyboard(key) => match key {
+      Key::R => reset(& mut window),
+      _ => (),
+    },
+    _ => () 
+  }
+}
+
+fn reset (mut window: & mut PistonWindow) {
+  game(& mut window);
+}
+
+fn check_end(button: Button){
+  use keyboard::Key ;
+  match button {
+      Button::Keyboard(key) => match key {
+      Key::Escape => end(),
+      _ => (),
+    },
+    _ => () 
+  }
+}
+
+fn end(){
+  use std::process::exit ;
+  exit(0);
+}
+
+fn main() {
+
+  // Just like in minecraft, randomness is dictated by a seed.
+  // This creates a random seed.
+  
+
+  // Eventually you may want to allow the user to provide their own seed,
+  // if they want to play the same game again.
+  // That is, the `2` and `4` tiles will spawn at exactly the same place **if
+  // the player makes the same moves**.
+  // let seed = Seed::of_str( <user_provided_string> ) ;
+
+  //create a Window
+  let mut window: PistonWindow = WindowSettings::new("2048", (340, 420)) //x,y
+    .exit_on_esc(true)
+    .build()
+    .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
+
+  game(& mut window);  
 }
