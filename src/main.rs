@@ -1,16 +1,14 @@
-//! Skeleton crate for a 2048 GUI.
+/// # Program for a 2048 GUI
 
+/// ## Crates and Aspects of Crates Used
+//Skeleton crate for a 2048 GUI.
 extern crate lib_2048 ;
 //Added Code
 extern crate piston_window;
-
-// 
+//Needed from skeleton crate
 pub use lib_2048::{ Seed, Grid, Dir, Evolution, Cell } ;
-
 //Added code
-pub use piston_window::*;//{EventLoop, Glyphs, PistonWindow, UpdateEvent, WindowSettings, clear};
-//
-
+pub use piston_window::*;
 pub type Color = [f32; 4] ;
 
 //Alternate Color Theme
@@ -45,13 +43,16 @@ pub type Color = [f32; 4] ;
 //   }
 // } 
 
+
+/// ## Colors Used for the GUI
+
+/// Colors for the Window and Text
 static BACKGROUND: Color = [0.3, 0.3, 0.3, 1.0] ;
 static SCOREBOARD:  Color = [0.0, 0.0, 0.0, 1.0] ;
 static RESET: Color = [0.0, 0.0, 0.0, 1.0];
 static DEFAULTCELLBLACK:  Color = [0.0, 0.0, 0.0, 1.0] ;
-
 static WHITE: Color = [1.0, 1.0, 1.0, 1.0] ;
-
+/// Colors for the Cells of the Grid
 static CELLYELLOW1:  Color = [1.0, 1.0, 0.0, 1.0] ;
 static CELLYELLOW2:  Color = [1.0, 0.8, 0.0, 1.0] ;
 static CELLYELLOW3:  Color = [1.0, 0.6, 0.0, 1.0] ;
@@ -65,6 +66,10 @@ static CELLLIGHTBLUE:  Color = [0.0, 1.0, 1.0, 1.0] ;
 static CELLPINK:  Color = [1.0, 0.0, 1.0, 1.0] ;
 static CELLBLUE:  Color = [0.0, 0.5, 1.0, 1.0] ;
 
+
+/// ## Functions for the GUI
+
+/// Matches the generated number for the cell to the appropriate color
 fn color_of_pow(pow: u32) -> Color {
   match pow {
     0 => DEFAULTCELLBLACK,
@@ -84,43 +89,7 @@ fn color_of_pow(pow: u32) -> Color {
   }
 }
 
-//path can just be a string
-//image: GlTexture::from_path(Path::new("bin/assets/digits.png")).unwrap(),
-
-// Image::new_color([color[0], color[1], color[2], 1.0])
-//                 .src_rect([(*digit * DIGITS_WIDTH as u32) as i32, 0, DIGITS_WIDTH as i32, DIGITS_HEIGHT as i32])
-//                 .rect([x, y, width, height])
-//                 .draw(&self.image,
-//                       default_draw_state(),
-//                       c.transform,
-//                       gl);
-
-////https://github.com/PistonDevelopers/image
-
-// pub use std::path::Path;
-
-// fn path_of_image(pow: u32) -> Path {
-
-//   let pathEmpty = Path::new("pics/empty.png");
-//   let path2 = Path::new("pics/2.png");
-//   let path128 = Path::new("pics/128.png");
-//   let path8192 = Path::new("pics/8192.png");
-
-//   match pow {
-//     0 => pathEmpty,
-//     1 => path2,
-//     2 => path128,
-//     _ => path8192,
-//   }
-// }
-
-// extern crate image;
-
-// use std::fs::File;
-// use std::path::Path;
-
-// use image::GenericImage;
-
+/// Matches the cells with the correct position on the grid
 fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
   match grid.grid()[row][col] {
     None => 0,
@@ -128,6 +97,7 @@ fn pow_of(grid: & Grid, row: usize, col: usize) -> u32 {
   }
 }
 
+/// Generates the new number of the cell
 fn value( pow: u32 ) -> u32{
   let mut value = 1;
   for x in 0..pow {
@@ -136,24 +106,23 @@ fn value( pow: u32 ) -> u32{
   return value;
 }
 
-/// Displays the grid using for instance piston.
+/// Displays the grid inside the piston window
 fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindow, glyphs: & mut Glyphs) {
-  
-  
   window.draw_2d(e, |c, g| {
-            clear(BACKGROUND, g); 
-            
+            // Draws the basic rectangles and colors the background
+            clear(BACKGROUND, g);
             rectangle(SCOREBOARD, 
                       [20.0, 20.0, 140.0, 60.0], 
                       c.transform, g);
             rectangle(RESET,
                       [180.0, 20.0, 140.0, 60.0],
                       c.transform, g);
-
+            // Iterates through the row and columns to generate the color & number
+            // for each cell
             for row in 0..4 {
               for col in 0..4 {
                 rectangle(
-                  color_of_pow( pow_of(grid, row, col) ), //  grey
+                  color_of_pow( pow_of(grid, row, col) ), //Grey
                   [
                     20.0 + (col as f64) * (60.0 + 20.0),
                     100.0 + (row as f64) * 80.0,
@@ -161,7 +130,6 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                   ],
                   c.transform, g
                 ) ;
-                //
                 let cell_pow = format!("{}", value(pow_of(grid, row, col)));
                 let transform = c.transform.trans(
                   45.0 + (col as f64) * (60.0 + 20.0) - (pow_of(grid, row, col) as f64),
@@ -169,27 +137,26 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
                 text::Text::new_color([0.0, 0.0, 0.0, 1.0], 20).draw(
                   &cell_pow, glyphs, & c.draw_state, transform, g
                 ) ;
-                //
               }
             } ;
 
             let score = format!("{}", grid.score()); 
-
+            // Displays the score for the game
             let transform = c.transform.trans(20.0, 76.0) ;
             text::Text::new_color(WHITE, 20).draw(
               &score, glyphs, & c.draw_state, transform, g
             ) ;
-
+            // Displays the score label for the game
             let transform = c.transform.trans(20.0, 36.0) ;
             text::Text::new_color(WHITE, 20).draw(
               "Score", glyphs, & c.draw_state, transform, g
-            ) ;
-
+            ) ; 
+            // Displays instructions on how to reset the game
             let transform = c.transform.trans(188.0, 36.0) ;
             text::Text::new_color(WHITE, 15).draw(
               "Press 'r' to Reset", glyphs, & c.draw_state, transform, g
             ) ;
-            
+            // Displays instructions on how to quit the game
             let transform = c.transform.trans(188.0, 66.0) ;
             text::Text::new_color(WHITE, 15).draw(
               "Press 'Esc' to Quit", glyphs, & c.draw_state, transform, g
@@ -197,8 +164,7 @@ fn display_grid<E: GenericEvent>(e: & E, grid: & Grid, window: & mut PistonWindo
       });
 }
 
-/// Read user input (up left down right). User may also want to exit, reset,
-/// *etc.*
+/// Reads the user's input and matches it with the appropriate direction to execute
 fn read_user_input(button: Button) -> Option<Dir> {  
   use keyboard::Key ;
   match button {
@@ -207,30 +173,66 @@ fn read_user_input(button: Button) -> Option<Dir> {
       Key::Down | Key::S => Some( Dir::Dw ),
       Key::Left | Key::A => Some( Dir::Lf ),
       Key::Right | Key::D => Some( Dir::Rg ),
-      //Key::R => Some(reset()),
       _ => None,
     },
     _ => None
   }
 }
 
+/// Checks if the user's input was to reset the game
+fn check_reset(button: Button, mut window: & mut PistonWindow) {
+  use keyboard::Key ;
+  match button {
+    Button::Keyboard(key) => match key {
+      Key::R => reset(& mut window),
+      _ => (),
+    },
+    _ => () 
+  }
+}
+
+/// Resets the game
+fn reset (mut window: & mut PistonWindow) {
+  game(& mut window);
+}
+
+/// Checks if the user's input was to exit the game
+fn check_end(button: Button){
+  use keyboard::Key ;
+  match button {
+      Button::Keyboard(key) => match key {
+      Key::Escape => end(),
+      _ => (),
+    },
+    _ => () 
+  }
+}
+
+/// Exits the game
+fn end(){
+  use std::process::exit ;
+  exit(0);
+}
+
+/// Takes the window as a parameter, starts and runs the game
 fn game(mut window: & mut PistonWindow) {
   let font_path = "fonts/NotoSans-Bold.ttf" ;
   let mut glyphs = Glyphs::new(font_path, window.factory.clone()).unwrap() ;
-  
   let seed = Seed::mk() ;
   // Create initial grid.
   let mut grid = Grid::mk(seed) ;
-
   grid.spawn() ;
-
+  // Continues to generate as long as there is a game to play
   while let Some(event) = window.next() {
     match event {
       Event::Update(_) => (),
       e @ Event::Render(_) => display_grid(& e, & grid, & mut window, & mut glyphs),
+      // Checks input from the user
       Event::Input( Input::Press(button) ) => {
+        // Checks for reset or quit the game
         check_reset(button, & mut window);
         check_end(button);
+        // Checks for direction move
         match read_user_input(button) {
           None => (),
           Some(dir) => {
@@ -240,6 +242,7 @@ fn game(mut window: & mut PistonWindow) {
               Dir::Lf => grid.left(),
               Dir::Rg => grid.right(),
             } ;
+            // Checks if grid can move and shifts and merges cells if it can move
             match evolution {
               Evolution::Nothing => (),
               Evolution::Moved => {
@@ -260,54 +263,13 @@ fn game(mut window: & mut PistonWindow) {
   }
 }
 
-fn check_reset(button: Button, mut window: & mut PistonWindow) {
-  use keyboard::Key ;
-  match button {
-    Button::Keyboard(key) => match key {
-      Key::R => reset(& mut window),
-      _ => (),
-    },
-    _ => () 
-  }
-}
-
-fn reset (mut window: & mut PistonWindow) {
-  game(& mut window);
-}
-
-fn check_end(button: Button){
-  use keyboard::Key ;
-  match button {
-      Button::Keyboard(key) => match key {
-      Key::Escape => end(),
-      _ => (),
-    },
-    _ => () 
-  }
-}
-
-fn end(){
-  use std::process::exit ;
-  exit(0);
-}
-
+/// Main function for GUI to start running
 fn main() {
-
-  // Just like in minecraft, randomness is dictated by a seed.
-  // This creates a random seed.
-  
-
-  // Eventually you may want to allow the user to provide their own seed,
-  // if they want to play the same game again.
-  // That is, the `2` and `4` tiles will spawn at exactly the same place **if
-  // the player makes the same moves**.
-  // let seed = Seed::of_str( <user_provided_string> ) ;
-
-  //create a Window
+  //Creates a Window
   let mut window: PistonWindow = WindowSettings::new("2048", (340, 420)) //x,y
     .exit_on_esc(true)
     .build()
     .unwrap_or_else(|e| { panic!("Failed to build PistonWindow: {}", e) });
-
+  // Starts the game
   game(& mut window);  
 }
